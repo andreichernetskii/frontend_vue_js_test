@@ -1,0 +1,34 @@
+@import './base.css';
+@import 'tailwindcss';
+
+body {
+  /* background-color: rgb(101 157 189); */
+  background-color: #f4f6f9;
+}
+
+text {
+  color: #2c3e50;
+}
+
+@theme {
+  --color-bg: #f4f6f9;
+  --color-cards: #e8eef3;
+  --color-buttons: #3498db;
+  --color-text: #2c3e50;
+  --color-borders: #bdc3c7;
+  --color-accent: #bdc3c7;
+  --color-income: #2ecc71;
+  --color-expense: #e74c3c;
+}
+
+.btn {
+  @apply border border-borders w-fit bg-buttons rounded-md px-4 cursor-pointer active:translate-y-1/20 text-text;
+}
+
+.inpt {
+  @apply border border-borders rounded-md pl-2;
+}
+
+.slct {
+  @apply border border-borders w-fit rounded-md px-2 text-text;
+}
