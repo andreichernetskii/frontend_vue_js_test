@@ -1,19 +1,22 @@
 <script setup>
 import { ref, provide, watch, reactive, onMounted } from 'vue'
-import axios from 'axios'
 import api from './axiosInstance'
 
 import CenterPanel from './components/CenterPanel.vue'
 import LeftPanel from './components/LeftPanel.vue'
-import RightPanel from './components/RightPanel.vue'
+import LimitsPanel from './components/LimitsPanel.vue'
 import AddTransaction from './components/AddTransaction.vue'
 import LoginPanel from './components/LoginPanel.vue'
 
 const transactions = ref([]) // list of all transactions from back
+
 const yearsInTransactions = ref([]) // years for filling <select> elements in filters
 const monthesInTransactions = ref([]) // monthes for filling <select> elements in filters
 const categoriesOfTransactions = ref([]) // transaction types for <select> in filters
 const typesOfTransactions = ref([]) // transaction types for <select> in filters
+
+const limits = ref([])
+const showAddLimitDialog = ref(false)
 
 const showLoginPanel = ref(false)
 
@@ -61,7 +64,7 @@ const getData = async () => {
     // delete params with empty value
     const params = Object.fromEntries(Object.entries(filterParams).filter(([_, v]) => v !== ''))
 
-    const { data } = await api.get(`http://localhost:8080/api/v1/transactions/`, { params })
+    const { data } = await api.get(`/api/v1/transactions/`, { params })
 
     transactions.value = data.map((obj) => ({
       ...obj,
@@ -77,7 +80,7 @@ const getData = async () => {
 
 const login = async () => {
   try {
-    const { status } = await api.post(`http://localhost:8080/api/auth/signin`, loginRequest)
+    const { status } = await api.post(`/api/auth/signin`, loginRequest)
     loginStatus.value = status
   } catch (error) {
     console.log(error)
@@ -86,7 +89,7 @@ const login = async () => {
 
 const logOut = async () => {
   try {
-    const { data } = await api.post(`http://localhost:8080/api/auth/signout`)
+    const { data } = await api.post(`/api/auth/signout`)
   } catch (error) {
     console.log(error)
   }
@@ -95,10 +98,7 @@ const logOut = async () => {
 const sendNewTransaction = async () => {
   try {
     console.log(financialTransactionDTO)
-    const { data } = await api.post(
-      'http://localhost:8080/api/v1/transactions/',
-      financialTransactionDTO,
-    )
+    const { data } = await api.post('/api/v1/transactions/', financialTransactionDTO)
   } catch (error) {
     console.log(error)
   }
@@ -114,6 +114,26 @@ const closeSendTransactionWindow = () => {
   console.log(isSendNewTransactionWindowOpen)
 }
 
+const fetchLimitsData = async () => {
+  try {
+    const { data } = await api.get(`http://localhost:8080/api/v1/limits/`)
+
+    limits.value = data.map((obj) => ({
+      ...obj,
+    }))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const openAddLimitDialog = () => {
+  showLoginPanel.value = true
+}
+
+const closeAddLimitDialog = () => {
+  showAddLimitDialog.value = false
+}
+
 provide('operationFunctions', {
   getData,
   applyFilters,
@@ -124,11 +144,14 @@ provide('operationFunctions', {
 
 provide('authorization', { login, logOut, loginRequest, closeLoginPanel })
 
+provide('limits', { limits, showAddLimitDialog, openAddLimitDialog, closeAddLimitDialog })
+
 provide('newTransactionAction', { financialTransactionDTO, sendNewTransaction })
 provide('newTransactionWindowAction', { openSendTransactionWindow, closeSendTransactionWindow })
 
 onMounted(async () => {
-  await getData()
+  getData()
+  fetchLimitsData()
 })
 
 watch(loginStatus, (newStatus) => {
@@ -150,6 +173,6 @@ watch(loginStatus, (newStatus) => {
     <LoginPanel v-if="showLoginPanel" />
     <LeftPanel class="w-1/6" />
     <CenterPanel class="w-4/6" />
-    <RightPanel class="w-2/6" />
+    <LimitsPanel class="w-2/6" />
   </div>
 </template>

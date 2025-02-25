@@ -8,7 +8,7 @@ const { logOut } = inject('authorization')
 
 <template>
   <header>
-    <div class="flex gap-2 mt-2 right-4 px-2">
+    <div class="flex justify-center gap-2 mt-2 right-4 px-2">
       <button @click="logOut" class="btn">Sign-Out</button>
       <button @click="getData" class="btn">Gather data</button>
       <button @click="openSendTransactionWindow" class="btn">New transaction</button>
