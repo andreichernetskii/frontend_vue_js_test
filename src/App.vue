@@ -12,11 +12,19 @@ const transactions = ref([]) // list of all transactions from back
 
 const yearsInTransactions = ref([]) // years for filling <select> elements in filters
 const monthesInTransactions = ref([]) // monthes for filling <select> elements in filters
-const categoriesOfTransactions = ref([]) // transaction types for <select> in filters
+const allCategories = ref([]) // transaction types for <select> in filters
 const typesOfTransactions = ref([]) // transaction types for <select> in filters
 
-const limits = ref([])
-const showAddLimitDialog = ref(false)
+const fetchAllCategories = async () => {
+  try {
+    const { data } = await api.get('/api/v1/transactions/categories')
+
+    allCategories.value = data
+    console.log(allCategories.value)
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 const showLoginPanel = ref(false)
 
@@ -114,26 +122,6 @@ const closeSendTransactionWindow = () => {
   console.log(isSendNewTransactionWindowOpen)
 }
 
-const fetchLimitsData = async () => {
-  try {
-    const { data } = await api.get(`http://localhost:8080/api/v1/limits/`)
-
-    limits.value = data.map((obj) => ({
-      ...obj,
-    }))
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-const openAddLimitDialog = () => {
-  showLoginPanel.value = true
-}
-
-const closeAddLimitDialog = () => {
-  showAddLimitDialog.value = false
-}
-
 provide('operationFunctions', {
   getData,
   applyFilters,
@@ -144,14 +132,14 @@ provide('operationFunctions', {
 
 provide('authorization', { login, logOut, loginRequest, closeLoginPanel })
 
-provide('limits', { limits, showAddLimitDialog, openAddLimitDialog, closeAddLimitDialog })
+provide('allCategories', { allCategories })
 
 provide('newTransactionAction', { financialTransactionDTO, sendNewTransaction })
 provide('newTransactionWindowAction', { openSendTransactionWindow, closeSendTransactionWindow })
 
 onMounted(async () => {
   getData()
-  fetchLimitsData()
+  fetchAllCategories()
 })
 
 watch(loginStatus, (newStatus) => {
@@ -162,17 +150,14 @@ watch(loginStatus, (newStatus) => {
     getData()
   }
 })
-
-// watch(filterParams, getData)
-// watch(financialTransactionDTO, sendNewTransaction)
 </script>
 
 <template>
   <AddTransaction v-if="isSendNewTransactionWindowOpen" />
   <div class="flex justify-between">
     <LoginPanel v-if="showLoginPanel" />
-    <LeftPanel class="w-1/6" />
-    <CenterPanel class="w-4/6" />
-    <LimitsPanel class="w-2/6" />
+    <LeftPanel class="w-1/7" />
+    <CenterPanel class="w-3/7" />
+    <LimitsPanel class="w-3/7" />
   </div>
 </template>

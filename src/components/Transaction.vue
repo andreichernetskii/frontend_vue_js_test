@@ -9,7 +9,7 @@ defineProps({
 
 <template>
   <div
-    class="m-auto border border-borders bg-cards w-5/6 h-10 mt-2 rounded-md hover:shadow-md shadow-accent"
+    class="m-auto border border-borders bg-cards mx-2 h-10 mt-2 rounded-md hover:shadow-md shadow-accent"
   >
     <div class="grid grid-cols-4 flex justify-between text-text place-items-center">
       <span>{{ category }}</span>
