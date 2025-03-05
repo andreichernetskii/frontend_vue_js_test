@@ -1,5 +1,5 @@
 <script setup>
-import { inject, reactive, ref, onMounted, provide } from 'vue'
+import { inject, reactive, ref, onMounted } from 'vue'
 import api from '@/axiosInstance'
 import { format } from 'date-fns'
 
@@ -15,12 +15,12 @@ const limits = ref([])
 
 const limitTypes = ref([])
 
-const limitDTO = {
+const limitDTO = reactive({
   limitType: '',
   limitAmount: '',
   category: '',
   creationDate: '',
-}
+})
 
 const fetchLimitsData = async () => {
   try {
@@ -59,7 +59,9 @@ const setNewLimit = async () => {
 const updateLimit = async (limitId, limit) => {
   try {
     limit.creationDate = format(new Date(), 'yyyy-MM-dd')
+    console.log('Updated limit: ', limit.limitAmount)
     const { data } = await api.put(`/api/v1/limits/${limitId}`, limit)
+    fetchLimitsData()
   } catch (error) {
     console.log(error)
   }
@@ -95,17 +97,6 @@ onMounted(async () => {
   fetchLimitsData()
   fetchLimitTypes()
 })
-
-provide('dataForNew', {
-  limitDTO,
-  limitTypes,
-  isShowLimitOperationWindow,
-  setNewLimit,
-  closeLimitOperationWindow,
-  openLimitOperationWindow,
-})
-
-provide('dataUpdate', {})
 </script>
 
 <template>
@@ -116,8 +107,6 @@ provide('dataUpdate', {})
       :is-show-limit-operation-window="isShowLimitOperationWindow"
       :limit-d-t-o="limitDTO"
       :submit-function="setNewLimit"
-      :open-limit-operation-window="openLimitOperationWindow"
-      :close-limit-operation-window="closeLimitOperationWindow"
     />
     <LimitCard
       v-for="limit in limits"

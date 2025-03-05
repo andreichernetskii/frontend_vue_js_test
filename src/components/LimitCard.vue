@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 
-import UpdateLimitWindow from './UpdateLimitWindow.vue'
+import LimitOperationWindow from './LimitOperationWindow.vue'
 
 defineProps({
   id: Number,
@@ -52,13 +52,13 @@ const closeLimitOperationWindow = () => {
       </div>
     </div>
   </div>
-  <UpdateLimitWindow
-    v-if="isEdit"
-    :key="id"
-    :limit-types="limitTypes"
+  <LimitOperationWindow
+    v-show="isEdit"
+    operation-name-title="Edit limit"
     :all-categories="allCategories"
-    :limit="limit"
-    :submit-function="updateLimit"
-    :close-limit-operation-window="closeLimitOperationWindow"
+    :limit-types="limitTypes"
+    :limit-dto="limit"
+    :submit-action="updateLimit"
+    :close-window-func="closeLimitOperationWindow"
   />
 </template>
