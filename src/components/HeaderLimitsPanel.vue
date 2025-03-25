@@ -26,14 +26,6 @@ const { allCategories } = inject('allCategories')
 
 <template>
   <div class="flex justify-center mt-2">
-    <!-- <NewLimitWindow
-      v-if="isShowLimitOperationWindow"
-      :limit-types="limitTypes"
-      :all-categories="allCategories"
-      :limit-d-t-o="limitDTO"
-      :submit-function="submitFunction"
-      :close-limit-operation-window="closeLimitOperationWindow"
-    /> -->
     <LimitOperationWindow
       v-show="isShowAddLimitWindow"
       operation-name-title="Set new limit"

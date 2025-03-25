@@ -2,6 +2,7 @@
 import { inject } from 'vue'
 
 const { filterParams, getData, resetFilters, applyFilters } = inject('operationFunctions')
+const { allCategories } = inject('allCategories')
 </script>
 
 <template>
@@ -19,7 +20,10 @@ const { filterParams, getData, resetFilters, applyFilters } = inject('operationF
       <option value="" selected>All monthes</option>
     </select>
     <select class="slct" v-model="filterParams.category">
-      <option value="" selected>All categories</option>
+      <option selected value="">All categories</option>
+      <option v-for="category in allCategories" :key="category.id" :value="category">
+        {{ category }}
+      </option>
     </select>
     <button class="btn" type="submit" @click="getData">Apply filters</button>
     <button class="btn" type="submit" @click="resetFilters">Reset filters</button>
