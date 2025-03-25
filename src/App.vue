@@ -160,7 +160,9 @@ const connectToAlertStream = () => {
   }
 
   // new SSE connection
-  eventSource = new EventSource('http://localhost:8080/api/v1/alerts/stream')
+  eventSource = new EventSource('http://localhost:8080/api/v1/alerts/stream', {
+    withCredentials: true,
+  })
 
   // connection opened event handler
   eventSource.onopen = () => {
@@ -197,6 +199,7 @@ const connectToAlertStream = () => {
       message: 'Connection error. Reconnecting...',
     }
     console.log(connectionStatus.value)
+    // connectToAlertStream()
   }
 
   // trying recconect after a while
