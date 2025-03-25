@@ -1,11 +1,11 @@
 <script setup>
 import Header from './Header.vue'
-import TransactionsSpace from './TransactionsSpace.vue'
+import TransactionsPanel from './TransactionsPanel.vue'
 </script>
 
 <template>
   <div class="items-place-center">
     <Header />
-    <TransactionsSpace />
+    <TransactionsPanel />
   </div>
 </template>
