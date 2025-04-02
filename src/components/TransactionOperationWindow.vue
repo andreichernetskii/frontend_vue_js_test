@@ -1,4 +1,6 @@
 <script setup>
+import { inject } from 'vue'
+
 const props = defineProps({
   closeWindowFunc: Function,
   submitAction: Function,
@@ -6,6 +8,8 @@ const props = defineProps({
   allCategories: Array,
   operationNameTitle: String,
 })
+
+const { typesOfTransactions } = inject('typesOfTransactions')
 
 const handleSubmitButton = async () => {
   props.submitAction()
@@ -25,9 +29,9 @@ const handleSubmitButton = async () => {
           required
         >
           <option value="" selected>Type</option>
-          <!-- TODO: here, may be shouldn't be a hardcoded transaction types -->
-          <option value="INCOME">INCOME</option>
-          <option value="EXPENSE">EXPENSE</option>
+          <option v-for="type in typesOfTransactions" :key="type" :value="type">
+            {{ type }}
+          </option>
         </select>
         <input
           class="inpt"

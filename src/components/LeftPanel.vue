@@ -3,6 +3,7 @@ import { inject } from 'vue'
 
 const { filterParams, getData, resetFilters, applyFilters } = inject('operationFunctions')
 const { allCategories } = inject('allCategories')
+const { typesOfTransactions } = inject('typesOfTransactions')
 </script>
 
 <template>
@@ -11,6 +12,9 @@ const { allCategories } = inject('allCategories')
     <!-- TODO: monthes and year like select and getted from transactions -->
     <select class="slct" v-model="filterParams.financialTransactionType">
       <option value="" selected>All types</option>
+      <option v-for="type in typesOfTransactions" :key="type" :value="type">
+        {{ type }}
+      </option>
     </select>
     <select class="slct" v-model="filterParams.year">
       <option value="" selected>All years</option>

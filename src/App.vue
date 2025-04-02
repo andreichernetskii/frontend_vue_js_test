@@ -22,6 +22,25 @@ const isSendNewTransactionWindowOpen = ref(false)
 
 const childRef = ref(null)
 
+// LIMITS
+
+const limits = ref([])
+
+const fetchLimitsData = async () => {
+  try {
+    const { data } = await api.get(`/api/v1/limits/`)
+
+    limits.value = data.map((obj) => ({
+      ...obj,
+    }))
+    console.log(limits.value)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+//
+
 const fetchAllCategories = async () => {
   try {
     const { data } = await api.get('/api/v1/transactions/categories')
@@ -29,6 +48,15 @@ const fetchAllCategories = async () => {
   } catch (error) {
     console.log(error)
     loginStatus.value = error.status
+  }
+}
+
+const fetchTrasactionTypes = async () => {
+  try {
+    const { data } = await api.get('/api/v1/transactions/types')
+    typesOfTransactions.value = data
+  } catch (error) {
+    console.error(error)
   }
 }
 
@@ -118,8 +146,6 @@ const sendNewTransaction = async () => {
 const updateTransaction = async (financialTransaction) => {
   try {
     await api.put('/api/v1/transactions/', financialTransaction)
-    // TODO: here the SSE
-    getData()
   } catch (error) {
     console.log(error)
     loginStatus.value = error.status
@@ -130,7 +156,6 @@ const updateTransaction = async (financialTransaction) => {
 const deleteTransaction = async (id) => {
   try {
     await api.delete(`/api/v1/transactions/${id}`)
-    // TODO: here the SSE
   } catch (error) {
     console.log(error)
   }
@@ -148,7 +173,6 @@ const closeSendTransactionWindow = () => {
 
 // SSE
 
-const alerts = ref([])
 const connectionStatus = ref(null)
 let eventSource = null
 
@@ -160,7 +184,7 @@ const connectToAlertStream = () => {
   }
 
   // new SSE connection
-  eventSource = new EventSource('http://localhost:8080/api/v1/alerts/stream', {
+  eventSource = new EventSource('http://localhost:8080/api/stream/subscribe', {
     withCredentials: true,
   })
 
@@ -185,8 +209,8 @@ const connectToAlertStream = () => {
   // default message handler
   eventSource.onmessage = (event) => {
     try {
-      alerts.value = JSON.parse(event.data)
-      console.log(alerts)
+      console.log(event.data)
+      processResponse(JSON.parse(event.data))
     } catch (error) {
       console.error('Error: ', error)
     }
@@ -199,14 +223,60 @@ const connectToAlertStream = () => {
       message: 'Connection error. Reconnecting...',
     }
     console.log(connectionStatus.value)
-    // connectToAlertStream()
+
+    if (eventSource.readyState !== EventSource.CLOSED) {
+      eventSource.close()
+    }
   }
 
-  // trying recconect after a while
-  // setTimeout(() => {
-  //   eventSource.close()
-  //   connectToAlertStream()
-  // }, 5000)
+  // onclose event
+  eventSource.addEventListener('close', () => {
+    connectionStatus.value = {
+      type: 'warning',
+      message: 'Disconnected. Reconnecting in 5 seconds...',
+    }
+    console.log(connectionStatus.value)
+
+    setTimeout(connectToAlertStream, 5000)
+  })
+}
+
+const processResponse = (data) => {
+  switch (data.eventType) {
+    case 'TRANSACTIONS_ALL':
+      transactions.value = data.data.map((obj) => ({
+        ...obj,
+      }))
+      break
+
+    case 'LIMITS_ALL':
+      limits.value = data.data.map((obj) => ({
+        ...obj,
+      }))
+      console.log(limits.value)
+
+      break
+
+    case 'ALERTS_ALL':
+      alerts.value = data
+      break
+
+    default:
+      console.error(`${data.eventType}: Unknown type of event!`)
+  }
+}
+
+// ALERTS
+
+const alerts = ref([])
+
+const fetchAlerts = async () => {
+  try {
+    const { data } = await api.get('/api/v1/alerts/')
+    alerts.value = data
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 provide('operationFunctions', {
@@ -230,9 +300,16 @@ provide('transactionActions', {
 
 provide('alerts', { alerts })
 
+provide('typesOfTransactions', { typesOfTransactions })
+
+provide('limits', { limits, fetchLimitsData })
+
 onMounted(async () => {
   getData()
   fetchAllCategories()
+  fetchLimitsData()
+  fetchTrasactionTypes()
+  fetchAlerts()
   connectToAlertStream()
 })
 
@@ -242,7 +319,7 @@ watch(loginStatus, (newStatus) => {
   } else if (newStatus === 200) {
     showLoginPanel.value = false
     getData()
-    childRef.value?.fetchLimitsData()
+    // childRef.value?.fetchLimitsData()
     // TODO here the why limits are not fetching
   }
 })
@@ -254,7 +331,7 @@ watch(loginStatus, (newStatus) => {
       <LoginPanel v-if="showLoginPanel" />
       <LeftPanel class="w-1/7" />
       <CenterPanel class="w-3/7 overflow-auto" />
-      <LimitsPanel class="w-3/7" ref="childRef" />
+      <LimitsPanel class="w-3/7" :limits="limits" :fetch-limits-data="fetchLimitsData" />
     </div>
   </main>
 </template>

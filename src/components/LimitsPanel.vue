@@ -1,5 +1,5 @@
 <script setup>
-import { inject, reactive, ref, onMounted, defineExpose } from 'vue'
+import { inject, reactive, ref, onMounted } from 'vue'
 import { format } from 'date-fns'
 import api from '@/axiosInstance'
 
@@ -7,13 +7,17 @@ import HeaderLimitsPanel from './HeaderLimitsPanel.vue'
 import LimitCard from './LimitCard.vue'
 import Alert from './Alert.vue'
 
+defineProps({
+  limits: Array,
+  fetchLimitsData: Function,
+})
+
 const { allCategories } = inject('allCategories')
 const { alerts } = inject('alerts')
+// const { limits, fetchLimitsData } = inject('limits')
 
 const isShowLimitOperationWindow = ref(false)
 const isEdit = ref(false)
-
-const limits = ref([])
 
 const limitTypes = ref([])
 
@@ -24,24 +28,11 @@ const limitDTO = reactive({
   creationDate: '',
 })
 
-const fetchLimitsData = async () => {
-  try {
-    const { data } = await api.get(`/api/v1/limits/`)
-
-    limits.value = data.map((obj) => ({
-      ...obj,
-    }))
-    console.log(limits.value)
-  } catch (error) {
-    console.log(error)
-  }
-}
-
 const deleteLimit = async (id) => {
   try {
     await api.delete(`/api/v1/limits/${id}`)
     // TODO: here the SSE
-    fetchLimitsData()
+    // fetchLimitsData()
   } catch (error) {
     console.log(error)
   }
@@ -53,7 +44,7 @@ const setNewLimit = async () => {
 
     const { data } = await api.post('/api/v1/limits/', limitDTO)
     // TODO: here the SSE
-    fetchLimitsData()
+    // fetchLimitsData()
     closeLimitOperationWindow()
   } catch (error) {
     console.log(error)
@@ -67,7 +58,7 @@ const updateLimit = async (limitId, limit) => {
     await api.put(`/api/v1/limits/${limitId}`, limit)
     // TODO: here the SSE
 
-    fetchLimitsData()
+    // fetchLimitsData()
   } catch (error) {
     console.log(error)
   }
@@ -101,10 +92,10 @@ const closeEditWindow = () => {
   isEdit.value = false
 }
 
-defineExpose({ fetchLimitsData })
+// defineExpose({ fetchLimitsData })
 
 onMounted(async () => {
-  fetchLimitsData()
+  // fetchLimitsData()
   fetchLimitTypes()
 })
 </script>
