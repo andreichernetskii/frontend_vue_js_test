@@ -22,6 +22,26 @@ const isSendNewTransactionWindowOpen = ref(false)
 
 const childRef = ref(null)
 
+const fetchYears = async () => {
+  try {
+    const { data } = await api.get(`/api/v1/transactions/years`)
+    yearsInTransactions.value = data
+    console.log('years: ', yearsInTransactions.value)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const fetchMonths = async () => {
+  try {
+    const { data } = await api.get(`/api/v1/transactions/months`)
+    monthesInTransactions.value = data
+    console.log('months: ', monthesInTransactions.value)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 // LIMITS
 
 const limits = ref([])
@@ -93,6 +113,8 @@ const resetFilters = () => {
   filterParams.month = ''
   filterParams.financialTransactionType = ''
   filterParams.category = ''
+
+  getData()
 }
 
 const getData = async () => {
@@ -258,7 +280,7 @@ const processResponse = (data) => {
       break
 
     case 'ALERTS_ALL':
-      alerts.value = data
+      alerts.value = data.data
       break
 
     default:
@@ -291,6 +313,9 @@ provide('authorization', { login, logOut, loginRequest, closeLoginPanel })
 
 provide('allCategories', { allCategories })
 
+provide('years', { yearsInTransactions })
+provide('months', { monthesInTransactions })
+
 provide('transactionActions', {
   financialTransactionDTO,
   sendNewTransaction,
@@ -310,17 +335,31 @@ onMounted(async () => {
   fetchLimitsData()
   fetchTrasactionTypes()
   fetchAlerts()
+  fetchYears()
+  fetchMonths()
   connectToAlertStream()
 })
 
+// onMounted(async () => {
+//   await Promise.all([
+//     fetchAllCategories(),
+//     fetchLimitsData(),
+//     fetchTrasactionTypes(),
+//     fetchAlerts(),
+//     fetchYears(),
+//     fetchMonths(),
+//     getData(),
+//   ])
+
+//   connectToAlertStream()
+// })
+//TODO: if login ok, every fetching function must be reloaded
 watch(loginStatus, (newStatus) => {
   if (newStatus === 401) {
     showLoginPanel.value = true
   } else if (newStatus === 200) {
     showLoginPanel.value = false
     getData()
-    // childRef.value?.fetchLimitsData()
-    // TODO here the why limits are not fetching
   }
 })
 </script>
