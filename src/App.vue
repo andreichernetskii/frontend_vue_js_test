@@ -6,6 +6,7 @@ import CenterPanel from './components/CenterPanel.vue'
 import LeftPanel from './components/LeftPanel.vue'
 import LimitsPanel from './components/LimitsPanel.vue'
 import LoginPanel from './components/LoginPanel.vue'
+import RegisterPanel from './components/RegisterPanel.vue'
 
 const transactions = ref([]) // list of all transactions from back
 
@@ -19,6 +20,8 @@ const showLoginPanel = ref(false)
 const loginStatus = ref(null)
 
 const isSendNewTransactionWindowOpen = ref(false)
+
+const isShowRegistrationPanel = ref(false)
 
 const childRef = ref(null)
 
@@ -85,6 +88,12 @@ const loginRequest = reactive({
   password: '',
 })
 
+const signupRequest = reactive({
+  email: '',
+  password: '',
+  demo: '',
+})
+
 // for updating transaction
 const financialTransactionDTO = reactive({
   financialTransactionType: '',
@@ -134,6 +143,22 @@ const getData = async () => {
     loginStatus.value = error.status
     console.log(loginStatus.value)
   }
+}
+
+const registerUser = async () => {
+  try {
+    await api.post(`/api/auth/signup`, signupRequest)
+  } catch (error) {
+    console.error()
+  }
+}
+
+const showRegisterPanel = () => {
+  isShowRegistrationPanel.value = true
+}
+
+const hideRegisterPanel = () => {
+  isShowRegistrationPanel.value = false
 }
 
 const login = async () => {
@@ -310,6 +335,7 @@ provide('operationFunctions', {
 })
 
 provide('authorization', { login, logOut, loginRequest, closeLoginPanel })
+provide('registration', { signupRequest, registerUser, showRegisterPanel, hideRegisterPanel })
 
 provide('allCategories', { allCategories })
 
@@ -368,6 +394,7 @@ watch(loginStatus, (newStatus) => {
   <main class="h-screen">
     <div class="flex justify-between h-screen">
       <LoginPanel v-if="showLoginPanel" />
+      <RegisterPanel v-if="isShowRegistrationPanel" />
       <LeftPanel class="w-1/7" />
       <CenterPanel class="w-3/7 overflow-auto" />
       <LimitsPanel class="w-3/7" :limits="limits" :fetch-limits-data="fetchLimitsData" />
