@@ -2,6 +2,11 @@
 import { inject } from 'vue'
 
 const { signupRequest, registerUser, hideRegisterPanel } = inject('registration')
+
+const handleSubmitEvent = async () => {
+  registerUser()
+  hideRegisterPanel()
+}
 </script>
 
 <template>
@@ -49,7 +54,7 @@ const { signupRequest, registerUser, hideRegisterPanel } = inject('registration'
       </div>
 
       <div class="flex justify-end gap-2">
-        <button class="btn" type="submit" @click="registerUser">Submit</button>
+        <button class="btn" type="submit" @click="handleSubmitEvent">Submit</button>
         <button class="btn" type="submit" @click="hideRegisterPanel">Cancel</button>
       </div>
     </div>
