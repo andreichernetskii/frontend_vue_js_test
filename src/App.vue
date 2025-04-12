@@ -231,7 +231,7 @@ const connectToAlertStream = () => {
   }
 
   // new SSE connection
-  eventSource = new EventSource('http://localhost:8080/api/stream/subscribe', {
+  eventSource = new EventSource('https://finman-project.duckdns.org/api/stream/subscribe', {
     withCredentials: true,
   })
 

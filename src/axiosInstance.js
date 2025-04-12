@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080', // backend address
+  baseURL: 'https://finman-project.duckdns.org', // backend address
   withCredentials: true, // allows brouser to keep cookies
 })
 
