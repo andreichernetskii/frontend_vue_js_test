@@ -28,7 +28,11 @@ const childRef = ref(null)
 const fetchYears = async () => {
   try {
     const { data } = await api.get(`/api/v1/transactions/years`)
-    yearsInTransactions.value = data
+
+    if (data.status == 'Success') {
+      yearsInTransactions.value = data.result
+    }
+
     console.log('years: ', yearsInTransactions.value)
   } catch (error) {
     console.error(error)
@@ -38,7 +42,11 @@ const fetchYears = async () => {
 const fetchMonths = async () => {
   try {
     const { data } = await api.get(`/api/v1/transactions/months`)
-    monthesInTransactions.value = data
+
+    if (data.status == 'Success') {
+      monthesInTransactions.value = data.result
+    }
+
     console.log('months: ', monthesInTransactions.value)
   } catch (error) {
     console.error(error)
@@ -67,7 +75,10 @@ const fetchLimitsData = async () => {
 const fetchAllCategories = async () => {
   try {
     const { data } = await api.get('/api/v1/transactions/categories')
-    allCategories.value = data
+
+    if (data.status == 'Success') {
+      allCategories.value = data.result
+    }
   } catch (error) {
     console.log(error)
     loginStatus.value = error.status
@@ -77,7 +88,10 @@ const fetchAllCategories = async () => {
 const fetchTrasactionTypes = async () => {
   try {
     const { data } = await api.get('/api/v1/transactions/types')
-    typesOfTransactions.value = data
+
+    if (data.status == 'Success') {
+      typesOfTransactions.value = data.result
+    }
   } catch (error) {
     console.error(error)
   }
@@ -96,6 +110,7 @@ const signupRequest = reactive({
 
 // for updating transaction
 const financialTransactionDTO = reactive({
+  id: '',
   financialTransactionType: '',
   amount: '',
   category: '',
@@ -133,14 +148,23 @@ const getData = async () => {
 
     const { data } = await api.get(`/api/v1/transactions/`, { params })
 
-    transactions.value = data.map((obj) => ({
-      ...obj,
-    }))
+    if (data.status == 'Success') {
+      transactions.value = data.result.map((obj) => ({
+        ...obj,
+      }))
+    }
 
     console.log(transactions.value.length)
   } catch (error) {
-    console.log(error)
-    loginStatus.value = error.status
+    console.error('Error in getData:', error)
+    if (error.response) {
+      loginStatus.value = error.response.status
+      console.log('Login status updated from error response:', loginStatus.value)
+    } else if (error.request) {
+      console.error('No response received:', error.request)
+    } else {
+      console.error('Error setting up request:', error.message)
+    }
     console.log(loginStatus.value)
   }
 }
@@ -192,7 +216,7 @@ const sendNewTransaction = async () => {
 
 const updateTransaction = async (financialTransaction) => {
   try {
-    await api.put('/api/v1/transactions/', financialTransaction)
+    await api.put(`/api/v1/transactions/${financialTransaction.id}`, financialTransaction)
   } catch (error) {
     console.log(error)
     loginStatus.value = error.status
@@ -231,7 +255,13 @@ const connectToAlertStream = () => {
   }
 
   // new SSE connection
-  eventSource = new EventSource('https://finman-project.duckdns.org/api/stream/subscribe', {
+  // for prod
+  // eventSource = new EventSource('https://finman-project.duckdns.org/api/stream/subscribe', {
+  //   withCredentials: true,
+  // })
+
+  // for local
+  eventSource = new EventSource('http://localhost:8080/api/stream/subscribe', {
     withCredentials: true,
   })
 
@@ -333,6 +363,8 @@ provide('operationFunctions', {
   transactions,
   filterParams,
 })
+
+provide('loginStatus', { loginStatus })
 
 provide('authorization', { login, logOut, loginRequest, closeLoginPanel })
 provide('registration', { signupRequest, registerUser, showRegisterPanel, hideRegisterPanel })

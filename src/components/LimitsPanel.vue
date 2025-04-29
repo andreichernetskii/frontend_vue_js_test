@@ -14,6 +14,7 @@ defineProps({
 
 const { allCategories } = inject('allCategories')
 const { alerts } = inject('alerts')
+const { loginStatus } = inject('loginStatus')
 // const { limits, fetchLimitsData } = inject('limits')
 
 const isShowLimitOperationWindow = ref(false)
@@ -70,8 +71,15 @@ const fetchLimitTypes = async () => {
     limitTypes.value = data.filter((limitType) => limitType !== 'ZERO')
     console.log(limitTypes.value)
   } catch (error) {
-    console.log(error)
-    loginStatus.value = error.status
+    console.error('Error in getData:', error)
+    if (error.response) {
+      loginStatus.value = error.response.status
+      console.log('Login status updated from error response:', loginStatus.value)
+    } else if (error.request) {
+      console.error('No response received:', error.request)
+    } else {
+      console.error('Error setting up request:', error.message)
+    }
     console.log(loginStatus.value)
   }
 }
