@@ -1,7 +1,5 @@
 <script setup>
 import { inject, reactive, ref, onMounted } from 'vue'
-import { format } from 'date-fns'
-import api from '@/axiosInstance'
 
 import HeaderLimitsPanel from './HeaderLimitsPanel.vue'
 import LimitCard from './LimitCard.vue'
@@ -19,70 +17,6 @@ const { loginStatus } = inject('loginStatus')
 
 const isShowLimitOperationWindow = ref(false)
 const isEdit = ref(false)
-
-const limitTypes = ref([])
-
-const limitDTO = reactive({
-  limitType: '',
-  limitAmount: '',
-  category: '',
-  creationDate: '',
-})
-
-const deleteLimit = async (id) => {
-  try {
-    await api.delete(`/api/v1/limits/${id}`)
-    // TODO: here the SSE
-    // fetchLimitsData()
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-const setNewLimit = async () => {
-  try {
-    limitDTO.creationDate = format(new Date(), 'yyyy-MM-dd')
-
-    const { data } = await api.post('/api/v1/limits/', limitDTO)
-    // TODO: here the SSE
-    // fetchLimitsData()
-    closeLimitOperationWindow()
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-const updateLimit = async (limitId, limit) => {
-  try {
-    limit.creationDate = format(new Date(), 'yyyy-MM-dd')
-    console.log('Updated limit: ', limit.limitAmount)
-    await api.put(`/api/v1/limits/${limitId}`, limit)
-    // TODO: here the SSE
-
-    // fetchLimitsData()
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-const fetchLimitTypes = async () => {
-  try {
-    const { data } = await api.get(`/api/v1/limits/types`)
-    limitTypes.value = data.filter((limitType) => limitType !== 'ZERO')
-    console.log(limitTypes.value)
-  } catch (error) {
-    console.error('Error in getData:', error)
-    if (error.response) {
-      loginStatus.value = error.response.status
-      console.log('Login status updated from error response:', loginStatus.value)
-    } else if (error.request) {
-      console.error('No response received:', error.request)
-    } else {
-      console.error('Error setting up request:', error.message)
-    }
-    console.log(loginStatus.value)
-  }
-}
 
 const openLimitOperationWindow = () => {
   isShowLimitOperationWindow.value = true
