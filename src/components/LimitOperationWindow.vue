@@ -1,12 +1,21 @@
 <script setup>
+import { storeToRefs } from 'pinia'
+
+import { useLimitStore } from '@/stores/limits'
+import { useFilterStore } from '@/stores/filters'
+
 const props = defineProps({
   operationNameTitle: String,
-  allCategories: Array,
-  limitTypes: Array,
   limitDto: Object,
   submitAction: Function,
   closeWindowFunc: Function,
 })
+
+const limitStore = useLimitStore()
+const filterStore = useFilterStore()
+
+const { limitTypes } = storeToRefs(limitStore)
+const { allCategories } = storeToRefs(filterStore)
 
 const handleSubmit = async () => {
   props.submitAction()
@@ -22,7 +31,7 @@ const handleSubmit = async () => {
       <div class="flex justify-between gap-2">
         <select class="slct" v-model="props.limitDto.limitType" required>
           <option value="" selected disabled>Limit type</option>
-          <option v-for="limitType in props.limitTypes" :key="limitType.id" :value="limitType">
+          <option v-for="limitType in limitTypes" :key="limitType" :value="limitType">
             {{ limitType }}
           </option>
         </select>
@@ -34,8 +43,8 @@ const handleSubmit = async () => {
           required
         />
         <select class="slct" v-model="props.limitDto.category">
-          <option val="All" selected>All</option>
-          <option v-for="category in props.allCategories" :key="category.id" :value="category">
+          <option value="" selected>All categories</option>
+          <option v-for="category in allCategories" :key="category.id" :value="category">
             {{ category }}
           </option>
         </select>

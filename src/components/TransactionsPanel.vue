@@ -1,13 +1,16 @@
 <script setup>
-import { inject, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+
+import { useFilterStore } from '@/stores/filters'
+import { useTransactionStore } from '@/stores/transactions'
 
 import Transaction from './Transaction.vue'
 
-const { transactions } = inject('operationFunctions')
-const { financialTransactionDTO, updateTransaction, deleteTransaction } =
-  inject('transactionActions')
+const transactionStore = useTransactionStore()
+const filterStore = useFilterStore()
 
-const { allCategories } = inject('allCategories')
+const { allCategories } = storeToRefs(filterStore)
+const { transactions, financialTransactionDTO } = storeToRefs(transactionStore)
 </script>
 
 <template>
@@ -21,8 +24,8 @@ const { allCategories } = inject('allCategories')
       :date="transaction.date"
       :amount="transaction.amount"
       :financialTransactionDTO="transaction"
-      :deleteTransactionFunc="() => deleteTransaction(transaction.id)"
-      :editFunc="() => updateTransaction(transaction)"
+      :deleteTransactionFunc="() => transactionStore.deleteTransaction(transaction.id)"
+      :editFunc="() => transactionStore.updateTransaction(transaction)"
       :allCategories="allCategories"
     />
   </div>

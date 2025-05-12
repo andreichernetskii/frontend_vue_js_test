@@ -13,6 +13,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.0.6",
     "axios": "^1.7.9",
+    "pinia": "^3.0.2",
     "tailwindcss": "^4.0.6",
     "vue": "^3.5.13",
     "vue-date-fns": "^2.0.2"

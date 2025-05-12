@@ -1,10 +1,16 @@
 <script setup>
+import { storeToRefs } from 'pinia'
 import { inject } from 'vue'
 
-const { signupRequest, registerUser, hideRegisterPanel } = inject('registration')
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+const { signupRequest } = storeToRefs(authStore)
+
+const { hideRegisterPanel } = inject('registration')
 
 const handleSubmitEvent = async () => {
-  registerUser()
+  authStore.registerUser()
   hideRegisterPanel()
 }
 </script>

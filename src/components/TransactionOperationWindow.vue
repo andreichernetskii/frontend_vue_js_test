@@ -1,5 +1,7 @@
 <script setup>
-import { inject } from 'vue'
+import { storeToRefs } from 'pinia'
+
+import { useFilterStore } from '@/stores/filters'
 
 const props = defineProps({
   closeWindowFunc: Function,
@@ -9,7 +11,8 @@ const props = defineProps({
   operationNameTitle: String,
 })
 
-const { typesOfTransactions } = inject('typesOfTransactions')
+const filterStore = useFilterStore()
+const { typesOfTransactions } = storeToRefs(filterStore)
 
 const handleSubmitButton = async () => {
   props.submitAction()

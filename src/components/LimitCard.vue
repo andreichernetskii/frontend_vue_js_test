@@ -1,20 +1,23 @@
 <script setup>
 import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
+
+import { useLimitStore } from '@/stores/limits'
 
 import LimitOperationWindow from './LimitOperationWindow.vue'
 
 defineProps({
   id: Number,
-  allCategories: Array,
   category: String,
   limitAmount: Number,
   limitType: String,
-  limitTypes: Array,
   creationDate: String,
   limit: Object,
   deleteLimit: Function,
   updateLimit: Function,
 })
+
+// const limitStore = useLimitStore()
 
 const isEdit = ref(false)
 
@@ -53,10 +56,8 @@ const closeLimitOperationWindow = () => {
     </div>
   </div>
   <LimitOperationWindow
-    v-show="isEdit"
+    v-if="isEdit"
     operation-name-title="Edit limit"
-    :all-categories="allCategories"
-    :limit-types="limitTypes"
     :limit-dto="limit"
     :submit-action="updateLimit"
     :close-window-func="closeLimitOperationWindow"
