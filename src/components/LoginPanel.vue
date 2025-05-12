@@ -9,6 +9,11 @@ const { loginRequest } = storeToRefs(authStore)
 
 const { showRegisterPanel } = inject('registration')
 
+const handelOpenRegistrationEvent = async () => {
+  showRegisterPanel()
+  authStore.closeLoginPanel()
+}
+
 // onMounted(() => {
 //   window.addEventListener('keydown', handleKeyDown)
 //   document.addEventListener('mousedown', handleClickOutside)
@@ -29,6 +34,7 @@ const { showRegisterPanel } = inject('registration')
     <div class="absolute inset-0 bg-black opacity-75"></div>
     <div class="relative bg-cards p-4 rounded-lg shadow-lg w-auto">
       <h2 class="text-center mb-2">Provide the authorization data</h2>
+      <h3 class="text-center mb-2">For tests just use login: demo@demo password: demo</h3>
       <div class="flex justify-between gap-2">
         <input
           class="inpt"
