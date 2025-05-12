@@ -1,35 +1,65 @@
-# frontend-test
+# Financial Tracker Frontend (Vue 3)
 
-This template should help get you started developing with Vue 3 in Vite.
+[![Vue.js Version](https://img.shields.io/badge/Vue.js-^3.5-brightgreen.svg)](https://vuejs.org/)
+[![Vite](https://img.shields.io/badge/Vite-^6.0-blueviolet.svg)](https://vitejs.dev/)
+[![Pinia](https://img.shields.io/badge/Pinia-^3.0-yellow.svg)](https://pinia.vuejs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-^4.0-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## Recommended IDE Setup
+This project is the frontend user interface for the **Financial Tracker Web Application**, built with Vue 3, Pinia, and Tailwind CSS. It interacts with a dedicated [backend service](https://github.com/andreichernetskii/FinTrackerBackEnd) built with Java and Spring Boot.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+This is primarily a **portfolio project** showcasing skills in modern frontend development practices using the Vue 3 Composition API and related ecosystem tools.
 
-## Customize configuration
+## Table of Contents
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+*   [Live Demo](#live-demo)
+*   [Key Features](#key-features)
+*   [Technology Stack](#technology-stack)
+*   [Deployment](#deployment)
+*   [License](#license)
 
-## Project Setup
 
-```sh
-npm install
-```
+## Live Demo
 
-### Compile and Hot-Reload for Development
+A live version of the application (frontend + backend) is deployed and accessible here:
 
-```sh
-npm run dev
-```
+**URL:** [https://finman-project.duckdns.org/](https://finman-project.duckdns.org/)
 
-### Compile and Minify for Production
+**Demo Credentials:**
+*   **Login:** `demo@demo`
+*   **Password:** `demo`
 
-```sh
-npm run build
-```
 
-### Lint with [ESLint](https://eslint.org/)
+## Key Features
 
-```sh
-npm run lint
-```
+*   **User Authentication:** Secure Login and Registration interface.
+*   **Transaction Management:** Intuitive UI for creating, viewing, updating, and deleting income and expense transactions.
+*   **Limit Management:** Interface to set, view, update, and delete spending limits for different categories.
+*   **Real-time Alerts:** Displays alerts instantly when spending limits are exceeded, utilizing Server-Sent Events (SSE) pushed from the backend.
+*   **Centralized State Management:** Uses Pinia for predictable and maintainable application state.
+*   **Responsive Design:** Built with Tailwind CSS for adaptability across different screen sizes.
+*   **Single Page Application (SPA):** Provides a smooth user experience without full page reloads (Note: Does not use Vue Router for view routing).
+
+
+## Technology Stack
+
+*   **Framework:** [Vue.js ^3.5](https://vuejs.org/) (using Composition API)
+*   **Build Tool:** [Vite ^6.0](https://vitejs.dev/)
+*   **State Management:** [Pinia ^3.0](https://pinia.vuejs.org/)
+*   **Styling:** [Tailwind CSS ^4.0](https://tailwindcss.com/)
+*   **HTTP Client:** [Axios ^1.7](https://axios-http.com/) (configured instance in `src/axiosInstance.js`)
+*   **Date Utility:** [vue-date-fns ^2.0](https://github.com/logustra/vue-date-fns#readme) (Wrapper around date-fns)
+*   **Real-time Updates:** Native EventSource API for Server-Sent Events (SSE) (managed via `src/stores/sse.js`)
+*   **Language:** JavaScript
+*   **Linting:** [ESLint](https://eslint.org/) (configured in `eslint.config.js`)
+*   **Formatting:** [Prettier](https://prettier.io/)
+*   **Package Manager:** npm
+*   **Containerization:** Docker
+
+## Deployment
+
+The combined application (frontend + backend) is currently deployed on a VPS (Ubuntu 22.04) using Docker Compose and Traefik as a reverse proxy. The frontend container serves static files via Nginx. Refer to the [Backend Deployment Overview](https://github.com/andreichernetskii/FinTrackerBackEnd#deployment-overview) for more details.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
