@@ -6,10 +6,8 @@ import { useLimitStore } from './limits'
 import { useAlertStore } from './alerts'
 import { useAuthStore } from './auth'
 
-// for prod
-// 'https://finman-project.duckdns.org/api/stream/subscribe'
-
-const SSE_URL = 'http://localhost:8080/api/stream/subscribe'
+// const SSE_URL = 'http://localhost:8080/api/stream/subscribe'
+const SSE_URL = 'https://finman-project.duckdns.org/api/stream/subscribe'
 
 export const useSseStore = defineStore('sse', () => {
   const connectionStatus = ref({ type: 'info', message: 'Disconnected' })
