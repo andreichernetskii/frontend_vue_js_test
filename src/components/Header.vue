@@ -1,12 +1,20 @@
 <script setup>
-import { inject, ref } from 'vue'
+import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
+
+import { useTransactionStore } from '@/stores/transactions'
+import { useAuthStore } from '@/stores/auth'
+import { useFilterStore } from '@/stores/filters'
 
 import TransactionOperationWindow from './TransactionOperationWindow.vue'
 
-const { getData } = inject('operationFunctions')
-const { logOut } = inject('authorization')
-const { financialTransactionDTO, sendNewTransaction } = inject('transactionActions')
-const { allCategories } = inject('allCategories')
+const transactionStore = useTransactionStore()
+const { financialTransactionDTO } = storeToRefs(transactionStore)
+
+const authStore = useAuthStore()
+
+const filterStore = useFilterStore()
+const { allCategories } = storeToRefs(filterStore)
 
 const isShowTransactionOparationWindow = ref(false)
 
@@ -22,18 +30,17 @@ const closeTransactionOperationWindow = () => {
 <template>
   <header>
     <div class="flex justify-center gap-2 mt-2 right-4 px-2">
-      <button @click="logOut" class="btn">Sign-Out</button>
-      <button @click="getData" class="btn">Gather data</button>
+      <button @click="authStore.logOut" class="btn">Sign-Out</button>
       <button @click="openTransactionOperationWindow" class="btn">New transaction</button>
     </div>
   </header>
 
   <div>
     <TransactionOperationWindow
-      v-show="isShowTransactionOparationWindow"
+      v-if="isShowTransactionOparationWindow"
       :close-window-func="closeTransactionOperationWindow"
       :financial-transaction-d-t-o="financialTransactionDTO"
-      :submit-action="sendNewTransaction"
+      :submit-action="() => transactionStore.addTransaction(financialTransactionDTO)"
       :all-categories="allCategories"
       operation-name-title="Add new transaction"
     />

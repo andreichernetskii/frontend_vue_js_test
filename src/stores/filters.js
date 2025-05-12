@@ -23,7 +23,7 @@ export const useFilterStore = defineStore('filters', () => {
       const { data } = await api.get(`/api/v1/transactions/years`)
 
       if (data.status == 'Success') {
-        yearsInTransactions.value = data.result
+        yearsInTransactions.value = data.results
       }
     } catch (error) {
       console.error('Failed to fetch years from DB: ', error)
@@ -35,7 +35,7 @@ export const useFilterStore = defineStore('filters', () => {
       const { data } = await api.get(`/api/v1/transactions/months`)
 
       if (data.status == 'Success') {
-        monthsInTransactions.value = data.result
+        monthsInTransactions.value = data.results
       }
     } catch (error) {
       console.error('Failed to fetch months from DB: ', error)
@@ -47,7 +47,7 @@ export const useFilterStore = defineStore('filters', () => {
       const { data } = await api.get('/api/v1/transactions/categories')
 
       if (data.status == 'Success') {
-        allCategories.value = data.result
+        allCategories.value = data.results
       }
     } catch (error) {
       console.log('Failed to fetch months from DB: ', error)
@@ -59,7 +59,7 @@ export const useFilterStore = defineStore('filters', () => {
       const { data } = await api.get('/api/v1/transactions/types')
 
       if (data.status == 'Success') {
-        typesOfTransactions.value = data.result
+        typesOfTransactions.value = data.results
       }
     } catch (error) {
       console.error('Failed to fetch transactions types from DB: ', error)
@@ -79,7 +79,7 @@ export const useFilterStore = defineStore('filters', () => {
 
   async function applyFilters() {
     const transactionStore = useTransactionStore()
-    transactionStore.fetchTrasactions()
+    transactionStore.fetchTransactions()
   }
 
   function resetFilters() {
@@ -92,10 +92,10 @@ export const useFilterStore = defineStore('filters', () => {
   }
 
   function reset() {
-    yearsInTransactions = []
-    monthsInTransactions = []
-    allCategories = []
-    typesOfTransactions = []
+    yearsInTransactions.value = []
+    monthsInTransactions.value = []
+    allCategories.value = []
+    typesOfTransactions.value = []
     params.year = ''
     params.month = ''
     params.financialTransactionType = ''

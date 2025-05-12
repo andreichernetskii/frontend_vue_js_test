@@ -1,15 +1,13 @@
 <script setup>
-import { inject, ref } from 'vue'
+import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
+
+import { useLimitStore } from '@/stores/limits'
 
 import LimitOperationWindow from './LimitOperationWindow.vue'
 
-defineProps({
-  limitTypes: Array,
-  allCategories: Array,
-  isShowLimitOperationWindow: Boolean,
-  limitDTO: Object,
-  submitFunction: Function,
-})
+const limitStore = useLimitStore()
+const { limitDTO } = storeToRefs(limitStore)
 
 const isShowAddLimitWindow = ref(false)
 
@@ -20,19 +18,15 @@ const openAddLimitWindow = () => {
 const closeAddLimitWindow = () => {
   isShowAddLimitWindow.value = false
 }
-
-const { allCategories } = inject('allCategories')
 </script>
 
 <template>
   <div class="flex justify-center mt-2">
     <LimitOperationWindow
-      v-show="isShowAddLimitWindow"
+      v-if="isShowAddLimitWindow"
       operation-name-title="Set new limit"
-      :all-categories="allCategories"
-      :limit-types="limitTypes"
       :limit-dto="limitDTO"
-      :submit-action="submitFunction"
+      :submit-action="() => limitStore.addLimit(limitDTO)"
       :close-window-func="closeAddLimitWindow"
     />
     <button class="btn" @click="openAddLimitWindow">Create new limit</button>

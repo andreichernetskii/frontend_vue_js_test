@@ -1,13 +1,13 @@
 <script setup>
-import { ref, provide, watch, reactive, onMounted, onBeforeUnmount } from 'vue'
+import { ref, provide, onMounted, onBeforeUnmount } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { useAuthStore } from './stores/auth'
-import { useTransactionStore } from './transactions'
-import { useLimitStore } from './limits'
-import { useAlertStore } from './alerts'
-import { useFilterStore } from './filters'
-import { useSseStore } from './sse'
+import { useTransactionStore } from './stores/transactions'
+import { useLimitStore } from './stores/limits'
+import { useAlertStore } from './stores/alerts'
+import { useFilterStore } from './stores/filters'
+import { useSseStore } from './stores/sse'
 
 import CenterPanel from './components/CenterPanel.vue'
 import LeftPanel from './components/LeftPanel.vue'
@@ -22,7 +22,7 @@ const filterStore = useFilterStore()
 const alertStore = useAlertStore()
 const sseStore = useSseStore()
 
-const { showLoginPanel, loginRequest } = storeToRefs(authStore)
+const { showLoginPanel } = storeToRefs(authStore)
 const { limits, isLoading: limitsLoading } = storeToRefs(limitStore)
 
 const isSendNewTransactionWindowOpen = ref(false)
@@ -45,17 +45,61 @@ const hideRegisterPanel = () => {
   isShowRegistrationPanel.value = false
 }
 
+const modalRef = ref(null)
+
+const emailFocusRef = ref(null)
+
+const handelOpenRegistrationEvent = async () => {
+  showRegisterPanel()
+  authStore.closeLoginPanel()
+}
+
+const handleClickOutside = (event) => {
+  if (modalRef.value && !modalRef.value.contains(event.target)) {
+    authStore.closeLoginPanel()
+  }
+}
+
+const handleEscapeKeyDown = (event) => {
+  if (event.key === 'Escape') {
+    authStore.closeLoginPanel()
+  }
+}
+
+const handleEnterKeyDown = (event) => {
+  if (event.key === 'Enter') {
+    authStore.login()
+  }
+}
+
 onMounted(async () => {
   try {
-    await transactionStore.fetchTrasactions()
+    sseStore.connect()
+
+    transactionStore.fetchTransactions()
+
+    limitStore.fetchLimits()
+    limitStore.fetchLimitTypes()
+
+    alertStore.fetchAlerts()
+
+    filterStore.fetchOptions()
   } catch (error) {
     console.log('Initial transaction fetch attempt finished (may have resulted in login prompt)')
   }
+
+  // window.addEventListener('keydown', handleKeyDown)
+  // document.addEventListener('mousedown', handleClickOutside)
 })
 
 onBeforeUnmount(() => {
   sseStore.disconnect()
+
+  // window.removeEventListener('keydown', handleKeyDown)
+  // document.removeEventListener('mousedown', handleClickOutside)
 })
+
+provide('registration', { showRegisterPanel, hideRegisterPanel })
 </script>
 
 <template>
@@ -65,7 +109,7 @@ onBeforeUnmount(() => {
       <RegisterPanel v-if="isShowRegistrationPanel" />
       <LeftPanel class="w-1/7" />
       <CenterPanel class="w-3/7 overflow-auto" />
-      <LimitsPanel class="w-3/7" :limits="limits" :fetch-limits-data="fetchLimitsData" />
+      <LimitsPanel class="w-3/7" />
     </div>
   </main>
 </template>

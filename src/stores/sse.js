@@ -27,7 +27,7 @@ export const useSseStore = defineStore('sse', () => {
       const parsedData = JSON.parse(data)
       switch (parsedData.eventType) {
         case 'TRANSACTIONS_ALL':
-          transactionStore.setTransactions(parseData.data)
+          transactionStore.setTransactions(parsedData.data)
           break
 
         case 'LIMITS_ALL':

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
-import api from './axiosInstance'
+import api from '@/axiosInstance'
 
 import { useTransactionStore } from './transactions'
 import { useLimitStore } from './limits'
@@ -41,7 +41,7 @@ export const useAuthStore = defineStore('auth', () => {
           const sseStore = useSseStore()
 
           await Promise.all([
-            transactionStore.fetchTrasactions(),
+            transactionStore.fetchTransactions(),
             limitStore.fetchLimits(),
             alertStore.fetchAlerts(),
             filterStore.fetchOptions(),

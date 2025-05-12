@@ -10,6 +10,7 @@ export const useLimitStore = defineStore('limits', () => {
   const isLoading = ref(false)
 
   const limitDTO = reactive({
+    id: '',
     limitType: '',
     limitAmount: '',
     category: '',
@@ -22,7 +23,7 @@ export const useLimitStore = defineStore('limits', () => {
       const { data } = await api.get(`/api/v1/limits/`)
 
       if (data.status == 'Success') {
-        limits.value = data.result.map((obj) => ({
+        limits.value = data.results.map((obj) => ({
           ...obj,
         }))
       }
@@ -34,7 +35,7 @@ export const useLimitStore = defineStore('limits', () => {
     }
   }
 
-  async function deleteLimit() {
+  async function deleteLimit(id) {
     isLoading.value = true
     try {
       await api.delete(`/api/v1/limits/${id}`)
@@ -48,7 +49,7 @@ export const useLimitStore = defineStore('limits', () => {
     }
   }
 
-  async function addLimit() {
+  async function addLimit(limitDTO) {
     isLoading.value = true
     try {
       limitDTO.creationDate = format(new Date(), 'yyyy-MM-dd')
@@ -64,12 +65,12 @@ export const useLimitStore = defineStore('limits', () => {
     }
   }
 
-  async function updateLimit() {
+  async function updateLimit(limitDTO) {
     isLoading.value = true
     try {
-      limit.creationDate = format(new Date(), 'yyyy-MM-dd')
+      limitDTO.creationDate = format(new Date(), 'yyyy-MM-dd')
       // TODO: am i need to process success status in response?
-      await api.put(`/api/v1/limits/${limitId}`, limit)
+      await api.put(`/api/v1/limits/${limitDTO.id}`, limitDTO)
       await fetchLimits
       return true
     } catch (error) {
@@ -84,7 +85,7 @@ export const useLimitStore = defineStore('limits', () => {
   async function fetchLimitTypes() {
     try {
       const { data } = await api.get(`/api/v1/limits/types`)
-      limitTypes.value = data.filter((limitType) => limitType !== 'ZERO')
+      limitTypes.value = data.results.filter((limitType) => limitType !== 'ZERO')
     } catch (error) {
       console.error('Failed to load limits types:', error)
     }

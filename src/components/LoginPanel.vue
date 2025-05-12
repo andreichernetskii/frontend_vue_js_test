@@ -1,13 +1,27 @@
 <script setup>
-import { inject } from 'vue'
+import { inject, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 
-const { loginRequest, login, closeLoginPanel } = inject('authorization')
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+const { loginRequest } = storeToRefs(authStore)
+
 const { showRegisterPanel } = inject('registration')
 
-const handelOpenRegistrationEvent = async () => {
-  showRegisterPanel()
-  closeLoginPanel()
-}
+// onMounted(() => {
+//   window.addEventListener('keydown', handleKeyDown)
+//   document.addEventListener('mousedown', handleClickOutside)
+
+//   if (emailFocusRef.value) {
+//     emailFocusRef.value.focus()
+//   }
+// })
+
+// onBeforeUnmount(() => {
+//   window.removeEventListener('keydown', handleKeyDown)
+//   document.removeEventListener('mousedown', handleClickOutside)
+// })
 </script>
 
 <template>
@@ -32,9 +46,9 @@ const handelOpenRegistrationEvent = async () => {
           placeholder="Password"
           required
         />
-        <button class="btn" @click="login" type="submit">Sign In</button>
+        <button class="btn" @click="authStore.login" type="submit">Sign In</button>
         <button class="btn" @click="handelOpenRegistrationEvent" type="submit">Sign Up</button>
-        <button class="btn" @click="closeLoginPanel" type="submit">Cancel</button>
+        <button class="btn" @click="authStore.closeLoginPanel" type="submit">Cancel</button>
       </div>
     </div>
   </div>

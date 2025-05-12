@@ -16,7 +16,7 @@ export const useTransactionStore = defineStore('transactions', () => {
     date: '',
   })
 
-  async function fetchTrasactions() {
+  async function fetchTransactions() {
     isLoading.value = true
     const filterStore = useFilterStore()
     const params = Object.fromEntries(
@@ -27,7 +27,7 @@ export const useTransactionStore = defineStore('transactions', () => {
       const { data } = await api.get(`/api/v1/transactions/`, { params })
 
       if (data.status == 'Success') {
-        transactions.value = data.result.map((obj) => ({
+        transactions.value = data.results.map((obj) => ({
           ...obj,
         }))
       }
@@ -57,8 +57,8 @@ export const useTransactionStore = defineStore('transactions', () => {
     isLoading.value = true
     try {
       // TODO: am i need to process success status in response?
-      await api.put(`/api/v1/transactions/${financialTransaction.id}`, financialTransaction)
-      await fetchTrasactions()
+      await api.put(`/api/v1/transactions/${financialTransactionDTO.id}`, financialTransactionDTO)
+      // await fetchTransactions()
       return true
     } catch (error) {
       console.error('Failed to update transaction: ', error)
@@ -72,7 +72,7 @@ export const useTransactionStore = defineStore('transactions', () => {
     isLoading.value = true
     try {
       await api.delete(`/api/v1/transactions/${id}`)
-      await fetchTrasactions()
+      // await fetchTransactions()
       return true
     } catch (error) {
       console.error('Failed to delete transaction: ', error)
@@ -85,6 +85,8 @@ export const useTransactionStore = defineStore('transactions', () => {
   // for new data from SSE
 
   function setTransactions(newTransactions) {
+    console.log('new list of transactions')
+
     transactions.value = newTransactions
   }
 
@@ -97,7 +99,7 @@ export const useTransactionStore = defineStore('transactions', () => {
     transactions,
     financialTransactionDTO,
     isLoading,
-    fetchTrasactions,
+    fetchTransactions,
     addTransaction,
     updateTransaction,
     deleteTransaction,
